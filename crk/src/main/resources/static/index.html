@@ -38,8 +38,20 @@
 	  table.render({
 	    elem: '#product'
 	    ,toolbar: '#productToolbar'
-	    ,height: 312
+	    ,height: 550
 	    ,url: '/product/pageList' //数据接口
+	   	,request: {
+	   		    pageName: 'pageNum' //页码的参数名称，默认：page
+	   		    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+	   	}
+   	    ,parseData: function(res){ //res 即为原始返回的数据
+   		    return {
+   		      "code": res.code, //解析接口状态
+   		      "msg": res.value, //解析提示文本
+   		      "count": res.data.total, //解析数据长度
+   		      "data": res.data.list //解析数据列表
+   		    };
+   		  }
 	    ,page: true //开启分页
 	    ,cols: [[ //表头
 	      {field: 'productBrand', title: '品牌' ,fixed: 'left'}
@@ -51,13 +63,6 @@
 	      ,{field: 'productColor', title: '颜色'}
 	      ,{field: 'productStock', title: '库存'}
 	    ]]
-	    ,response: {
-	        statusName: 'code' //规定数据状态的字段名称，默认：code
-	        ,statusCode: 0 //规定成功的状态码，默认：0
-	        ,msgName: 'value' //规定状态信息的字段名称，默认：msg
-	        ,countName: 'data.total' //规定数据总数的字段名称，默认：count
-	        ,dataName: 'data.list' //规定数据列表的字段名称，默认：data
-	      } 
 	  });
 	  
 	  // 头部工具条事件监听

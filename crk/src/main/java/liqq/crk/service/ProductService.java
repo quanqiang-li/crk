@@ -26,7 +26,8 @@ public class ProductService {
 	 */
 	public PageInfo<CrkProduct> selectPage(int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<CrkProduct> list = crkProductMapper.selectByExample(new CrkProductExample());
+		CrkProductExample crkProductExample = new CrkProductExample();
+		List<CrkProduct> list = crkProductMapper.selectByExample(crkProductExample);
 		// 用PageInfo对结果进行包装
 		PageInfo<CrkProduct> page = new PageInfo<>(list);
 		return page;

@@ -74,27 +74,16 @@
 		!function() {
 			var $ = layui.jquery;
 			var form = layui.form;
+			var layer = layui.layer;
 			//监听提交
 			form.on('submit(formProduct)', function(data) {
 				$.ajax({
 				      url:"/product/addProduct",
 				      type:"POST",
-				    /*  data:{
-				    	  productBrand:$("#productBrand").val(),
-				    	  productType:$("#productType").val(),
-				    	  productItem:$("#productItem").val(),
-				    	  suitableSeason:$("#suitableSeason").val(),
-				    	  suitableSex:$("input[name='suitableSex']:checked").val(),
-				    	  productSize:$("#productSize").val(),
-				    	  productColor:$("#productColor").val()
-				      },*/
 				      data: data.field,
 				      success: function(data){
-				    	  console.log(data);
-				          },
-					  error: function(errorMsg){
-						  console.log("异常"+errorMsg);
-					  }
+				    	  layer.msg(data.value);
+				          }
 				  })
 				return false;
 			});
