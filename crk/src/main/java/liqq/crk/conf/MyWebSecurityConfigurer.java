@@ -32,7 +32,7 @@ public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// security的CsrfFilter跨站请求伪造,默认只允许"GET", "HEAD", "TRACE",
 		// "OPTIONS",不支持POST,这里粗暴禁用
-		// http.csrf().disable();
+		http.csrf().disable();
 		// 是否允许页面被iframe嵌套，deny 不允许，sameOrigin 同域下允许
 		http.headers().frameOptions().sameOrigin();
 		http
@@ -40,6 +40,9 @@ public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated()
 			.and()
 		.formLogin();
+//		http
+//		.authorizeRequests()
+//			.anyRequest().permitAll();
 	}
 
 }
