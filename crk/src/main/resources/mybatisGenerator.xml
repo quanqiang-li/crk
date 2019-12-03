@@ -29,7 +29,7 @@
 		<javaClientGenerator targetPackage="liqq.crk.dao.mysql"
 			type="XMLMAPPER" targetProject="src/main/java">
 		</javaClientGenerator>
-		<table tableName="crk_output" domainObjectName="CrkOutput"
+		<table tableName="crk_input" domainObjectName="CrkInput"
 			enableSelectByExample="true" enableUpdateByExample="true"
 			enableDeleteByExample="true" enableCountByExample="true">
 			<generatedKey column="id" sqlStatement="MySql" identity="true" /><!-- 

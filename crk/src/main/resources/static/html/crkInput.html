@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="/js/layui/css/layui.css">
+<title>入库</title>
+</head>
+<body>
+	<form class="layui-form">
+		<!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+		<input type="text" name="productId" id="productId"  lay-verify="required" autocomplete="off" class="layui-input layui-hide">    
+		<div class="layui-form-item">
+			<label class="layui-form-label">日期</label>
+			<div class="layui-input-block">
+				<input type="text" name="inputDate" id="inputDate" lay-verify="required" 
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">单价</label>
+			<div class="layui-input-block">
+				<input type="text" name="inputPrice" id="inputPrice" lay-verify="required" placeholder="请输入"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数量</label>
+			<div class="layui-input-block">
+				<input type="text" name="inputNum" id="inputNum" placeholder="请输入"
+					autocomplete="off" class="layui-input" lay-verify="required">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="formInput">立即入库</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+		<!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+	</form>
+	<script src="/js/layui/layui.all.js"></script>
+	<script>
+		//提交
+		;
+		!function() {
+			var $ = layui.jquery;
+			var form = layui.form;
+			var layer = layui.layer;
+			var laydate = layui.laydate;
+			//监听提交
+			form.on('submit(formInput)', function(data) {
+				$.ajax({
+				      url:"/product/crkInput",
+				      type:"POST",
+				      data: JSON.stringify(data.field),
+				      contentType:"application/json",
+				      success: function(data){
+				    	  layer.msg(data.value);
+				          }
+				  })
+				return false;
+			});
+
+			  //执行一个laydate实例
+			  laydate.render({
+			    elem: '#inputDate' //指定元素
+			  });
+			
+		}();
+	</script>
+</body>
+</html>

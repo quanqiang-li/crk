@@ -93,4 +93,18 @@ public interface CrkProductMapper {
      * @mbg.generated Sat Nov 30 15:44:37 CST 2019
      */
     int updateByPrimaryKey(CrkProduct record);
+    
+    /**
+     * 按货号查询，时间倒序 商品
+     * @param productItem
+     * @return
+     */
+    List<CrkProduct> selectByItem(@Param("productItem") String productItem);
+    /**
+     * 按货号查询，时间倒序 入库
+     * @param productItem
+     * @return
+     */
+    List<CrkProduct> selectByInput(@Param("productItem") String productItem);
+    
 }

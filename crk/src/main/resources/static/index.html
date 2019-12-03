@@ -16,17 +16,37 @@
 		</ul>
 		<div class="layui-tab-content">
 			<div class="layui-tab-item layui-show">
+				<div class="demoTable">
+				  搜索货号：
+				  <div class="layui-inline">
+				    <input class="layui-input" name="productItem" id="productItem" autocomplete="off">
+				  </div>
+				  <button id="productReload" class="layui-btn" data-type="reload">搜索</button>
+				</div>
 				<table id="product" lay-filter="productFilter"></table>
-				<script type="text/html" id="productToolbar">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="addProduct">添加新商品</button>
-  </div>
-				</script>
 			</div>
-			<div class="layui-tab-item">2</div>
+			<div class="layui-tab-item">
+				<div class="demoTable">
+				  搜索货号：
+				  <div class="layui-inline">
+				    <input class="layui-input" name="productItem" id="productItem2" autocomplete="off">
+				  </div>
+				  <button id="productReload2" class="layui-btn" data-type="reload">搜索</button>
+				</div>
+				<table id="productInput" lay-filter="productInputFilter"></table>
+
+			</div>
 			<div class="layui-tab-item">3</div>
 		</div>
 	</div>
+<script type="text/html" id="productToolbar">
+  <div class="layui-btn-container " align="right">
+    <button class="layui-btn layui-btn-sm" lay-event="addProduct">添加新商品</button>
+  </div>
+</script>
+<script type="text/html" id="crkInput">
+  <a class="layui-btn layui-btn-xs" lay-event="crkInput">入库</a>
+</script>
 	<script src="/js/layui/layui.all.js"></script>
 	<script>
 	//由于模块都一次性加载，因此不用执行 layui.use() 来加载对应模块，直接使用即可：
@@ -35,10 +55,10 @@
 	var $ = layui.jquery;
 	var layer = layui.layer;
 	var table = layui.table;
-	  table.render({
+	table.render({
 	    elem: '#product'
 	    ,toolbar: '#productToolbar'
-	    ,height: 550
+	    ,height: 600
 	    ,url: '/product/pageList' //数据接口
 	   	,request: {
 	   		    pageName: 'pageNum' //页码的参数名称，默认：page
@@ -53,15 +73,17 @@
    		    };
    		  }
 	    ,page: true //开启分页
+	    ,totalRow:true // 开启合计功能
 	    ,cols: [[ //表头
-	      {field: 'productBrand', title: '品牌' ,fixed: 'left'}
+	      {field: 'productBrand', title: '品牌',totalRowText:'合计:' }
 	      ,{field: 'productType', title: '分类' }
 	      ,{field: 'productItem', title: '货号' }
 	      ,{field: 'suitableSeason', title: '适用季节'} 
 	      ,{field: 'suitableSex', title: '适用性别'}
 	      ,{field: 'productSize', title: '尺寸'}
 	      ,{field: 'productColor', title: '颜色'}
-	      ,{field: 'productStock', title: '库存'}
+	      ,{field: 'productStock', title: '库存',totalRow:true}
+	      ,{field: 'operator', title: '操作',toolbar: '#crkInput'}
 	    ]]
 	  });
 	  
@@ -78,6 +100,86 @@
 		    break;
 		  };
 		});
+	  
+	//监听行内工具条 
+	  table.on('tool(productFilter)', function(obj){ //注：tool 是工具条事件名，productFilter 是 table 原始容器的属性 lay-filter="对应的值"
+	    var data = obj.data; //获得当前行数据
+	    var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+	    var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+	   //入库弹窗
+	    if(layEvent === 'crkInput'){ //
+	    	layer.open({
+	    		  type: 2,
+	    		  title:'入库',
+	    		  area : ['450px', '450px'],//宽，高
+	    		  content: '/html/crkInput.html', //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+    			  success: function(layerCur, index){ // success 弹窗成功之后回调，layerCur当前页dom，iframe的index
+    				    var body = layer.getChildFrame('body', index);//得到iframe的body，然后下面操作赋值
+    				    body.find("#productId").val(data.id);//给弹出层元素赋值
+    				  }
+	    		});
+	    }
+	  });
+	
+	// 搜索，重载
+	  $('#productReload').on('click', function(){
+				  //执行重载
+			      table.reload('product', {
+			        page: {
+			          curr: 1 //重新从第 1 页开始
+			        }
+			        ,where: {
+			        	productItem: $('#productItem').val()
+			        }
+			      });
+		  });
+	
+	///////////////以下是入库//////////////////////
+	  table.render({
+		    elem: '#productInput'
+		    //,toolbar: '#productToolbar'
+		    ,height: 600
+		    ,url: '/product/pageListCrkInput' //数据接口
+		   	,request: {
+		   		    pageName: 'pageNum' //页码的参数名称，默认：page
+		   		    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+		   	}
+	   	    ,parseData: function(res){ //res 即为原始返回的数据
+	   		    return {
+	   		      "code": res.code, //解析接口状态
+	   		      "msg": res.value, //解析提示文本
+	   		      "count": res.data.total, //解析数据长度
+	   		      "data": res.data.list //解析数据列表
+	   		    };
+	   		  }
+		    ,page: true //开启分页
+		    ,totalRow:true // 开启合计功能
+		    ,cols: [[ //表头
+		      {field: 'productBrand', title: '品牌',totalRowText:'合计:' }
+		      ,{field: 'productType', title: '分类' }
+		      ,{field: 'productItem', title: '货号' }
+		      ,{field: 'suitableSeason', title: '适用季节'} 
+		      ,{field: 'suitableSex', title: '适用性别'}
+		      ,{field: 'productSize', title: '尺寸'}
+		      ,{field: 'productColor', title: '颜色'}
+		      ,{field: 'inputDate', title: '入库时间'}
+		      ,{field: 'inputNum', title: '数量',totalRow:true}
+		      ,{field: 'inputPrice', title: '价格'}
+		    ]]
+		  });
+		// 搜索，重载
+	  $('#productReload2').on('click', function(){
+				  //执行重载
+			      table.reload('productInput', {
+			        page: {
+			          curr: 1 //重新从第 1 页开始
+			        }
+			        ,where: {
+			        	productItem: $('#productItem2').val()
+			        }
+			      });
+		  });
+	
 	  
 	}();
 </script>

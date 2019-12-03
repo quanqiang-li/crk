@@ -16,6 +16,11 @@
     <result column="suitable_sex" jdbcType="VARCHAR" property="suitableSex" />
     <result column="product_size" jdbcType="VARCHAR" property="productSize" />
     <result column="product_color" jdbcType="VARCHAR" property="productColor" />
+    <result column="product_stock" jdbcType="INTEGER" property="productStock" />
+    <!-- 入库 -->
+    <result column="input_date" jdbcType="TIMESTAMP" property="inputDate" />
+    <result column="input_num" jdbcType="INTEGER" property="inputNum" />
+    <result column="input_price" jdbcType="DECIMAL" property="inputPrice" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -346,4 +351,28 @@
       product_color = #{productColor,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByItem" parameterType="string" resultMap="BaseResultMap">
+  SELECT
+	t1.*,IFNULL(t2.inputNum,0)-IFNULL(t3.outputNum,0) product_stock
+FROM
+	crk_product t1
+LEFT JOIN (SELECT product_id,SUM(input_num) inputNum from crk_input GROUP BY product_id) t2 ON t1.id = t2.product_id
+LEFT JOIN (SELECT product_id,SUM(output_num) outputNum from crk_output GROUP BY product_id) t3 ON t1.id = t3.product_id
+	<if test="productItem != null and productItem != ''">
+where t1.product_item like concat('%',#{productItem},'%') 
+     </if>
+     order by t1.create_time desc
+  </select>
+  
+  <select id="selectByInput" parameterType="string" resultMap="BaseResultMap">
+  SELECT t1.input_date,t1.input_num,t1.input_price,t2.* from 
+crk_input t1 INNER JOIN crk_product t2 on t1.product_id = t2.id
+	<if test="productItem != null and productItem != ''">
+where t2.product_item like concat('%',#{productItem},'%') 
+     </if>
+ORDER BY t1.input_date desc
+  </select>
+  
+  
 </mapper>
