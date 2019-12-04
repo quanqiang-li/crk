@@ -21,6 +21,10 @@
     <result column="input_date" jdbcType="TIMESTAMP" property="inputDate" />
     <result column="input_num" jdbcType="INTEGER" property="inputNum" />
     <result column="input_price" jdbcType="DECIMAL" property="inputPrice" />
+    <!-- 出库 -->
+    <result column="output_time" jdbcType="TIMESTAMP" property="outputTime" />
+    <result column="output_num" jdbcType="INTEGER" property="outputNum" />
+    <result column="output_price" jdbcType="DECIMAL" property="outputPrice" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -372,6 +376,15 @@ crk_input t1 INNER JOIN crk_product t2 on t1.product_id = t2.id
 where t2.product_item like concat('%',#{productItem},'%') 
      </if>
 ORDER BY t1.input_date desc
+  </select>
+  
+    <select id="selectByOutput" parameterType="string" resultMap="BaseResultMap">
+  SELECT t1.output_time,t1.output_num,t1.output_price,t2.* from 
+crk_output t1 INNER JOIN crk_product t2 on t1.product_id = t2.id
+	<if test="productItem != null and productItem != ''">
+where t2.product_item like concat('%',#{productItem},'%') 
+     </if>
+ORDER BY t1.output_time desc
   </select>
   
   

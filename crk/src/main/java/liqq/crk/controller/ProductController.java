@@ -82,7 +82,7 @@ public class ProductController {
 	 * @return
 	 */
 	@PostMapping("crkOutput")
-	public ReturnData crkOutput(CrkOutput crkOutput) {
+	public ReturnData crkOutput(@RequestBody CrkOutput crkOutput) {
 		productService.crkOutput(crkOutput);
 		return new ReturnData(Code.OK, null);
 	}
@@ -94,10 +94,10 @@ public class ProductController {
 	 * @return
 	 */
 	@GetMapping("pageListCrkOutput")
-	public ReturnData pageListCrkOutput(Integer pageNum, Integer pageSize) {
+	public ReturnData pageListCrkOutput(Integer pageNum, Integer pageSize,String productItem) {
 		pageNum = pageNum == null ? 1 : pageNum;
 		pageSize = pageSize == null ? 10 : pageSize;
-		PageInfo<CrkOutput> page = productService.selectPageCrkOutput(pageNum, pageSize);
+		PageInfo<CrkProduct> page = productService.selectPageCrkOutput(pageNum, pageSize,productItem);
 		return new ReturnData(Code.OK, page);
 	}
 

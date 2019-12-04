@@ -106,5 +106,11 @@ public interface CrkProductMapper {
      * @return
      */
     List<CrkProduct> selectByInput(@Param("productItem") String productItem);
+    /**
+     * 按货号查询，时间倒序 入库
+     * @param productItem
+     * @return
+     */
+    List<CrkProduct> selectByOutput(@Param("productItem") String productItem);
     
 }

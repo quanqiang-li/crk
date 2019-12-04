@@ -5,7 +5,7 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" href="/js/layui/css/layui.css">
-<title>入库</title>
+<title>出库</title>
 </head>
 <body>
 	<form class="layui-form">
@@ -14,28 +14,28 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">日期</label>
 			<div class="layui-input-block">
-				<input type="text" name="inputDate" id="inputDate" lay-verify="required" 
+				<input type="text" name="outputTime" id="outputTime" lay-verify="required" 
 					autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">单价</label>
 			<div class="layui-input-block">
-				<input type="text" name="inputPrice" id="inputPrice" lay-verify="required" placeholder="请输入"
+				<input type="text" name="outputPrice" id="outputPrice" lay-verify="required" placeholder="请输入"
 					autocomplete="off" class="layui-input">
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label">数量</label>
 			<div class="layui-input-block">
-				<input type="text" name="inputNum" id="inputNum" placeholder="请输入"
+				<input type="text" name="outputNum" id="outputNum" placeholder="请输入"
 					autocomplete="off" class="layui-input" lay-verify="required">
 			</div>
 		</div>
 		
 		<div class="layui-form-item">
 			<div class="layui-input-block">
-				<button class="layui-btn" lay-submit lay-filter="formInput">立即入库</button>
+				<button class="layui-btn" lay-submit lay-filter="formOutput">确认出库</button>
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 			</div>
 		</div>
@@ -51,9 +51,9 @@
 			var layer = layui.layer;
 			var laydate = layui.laydate;
 			//监听提交
-			form.on('submit(formInput)', function(data) {
+			form.on('submit(formOutput)', function(data) {
 				$.ajax({
-				      url:"/product/crkInput",
+				      url:"/product/crkOutput",
 				      type:"POST",
 				      data: JSON.stringify(data.field),
 				      contentType:"application/json",
@@ -70,7 +70,7 @@
 
 			  //执行一个laydate实例
 			  laydate.render({
-			    elem: '#inputDate' //指定元素
+			    elem: '#outputTime' //指定元素
 			  });
 			
 		}();

@@ -8,11 +8,11 @@
 <title>首页</title>
 </head>
 <body>
-	<div class="layui-tab layui-tab-card">
+	<div class="layui-tab layui-tab-card" lay-filter="crk">
 		<ul class="layui-tab-title layui-bg-green">
-			<li class="layui-this">商品库存</li>
-			<li>入库明细</li>
-			<li>出库明细</li>
+			<li class="layui-this" lay-id="productTab">商品库存</li>
+			<li lay-id="inputTab">入库明细</li>
+			<li lay-id="outputTab">出库明细</li>
 		</ul>
 		<div class="layui-tab-content">
 			<div class="layui-tab-item layui-show">
@@ -36,7 +36,16 @@
 				<table id="productInput" lay-filter="productInputFilter"></table>
 
 			</div>
-			<div class="layui-tab-item">3</div>
+			<div class="layui-tab-item">
+				<div class="demoTable">
+				  搜索货号：
+				  <div class="layui-inline">
+				    <input class="layui-input" name="productItem" id="productItem3" autocomplete="off">
+				  </div>
+				  <button id="productReload3" class="layui-btn" data-type="reload">搜索</button>
+				</div>
+				<table id="productOutput" lay-filter="productOutputFilter"></table>
+			</div>
 		</div>
 	</div>
 <script type="text/html" id="productToolbar">
@@ -44,8 +53,9 @@
     <button class="layui-btn layui-btn-sm" lay-event="addProduct">添加新商品</button>
   </div>
 </script>
-<script type="text/html" id="crkInput">
+<script type="text/html" id="crkOperator">
   <a class="layui-btn layui-btn-xs" lay-event="crkInput">入库</a>
+  <a class="layui-btn layui-btn-xs" lay-event="crkOutput">出库</a>
 </script>
 	<script src="/js/layui/layui.all.js"></script>
 	<script>
@@ -55,6 +65,7 @@
 	var $ = layui.jquery;
 	var layer = layui.layer;
 	var table = layui.table;
+	var element = layui.element;
 	table.render({
 	    elem: '#product'
 	    ,toolbar: '#productToolbar'
@@ -83,7 +94,7 @@
 	      ,{field: 'productSize', title: '尺寸'}
 	      ,{field: 'productColor', title: '颜色'}
 	      ,{field: 'productStock', title: '库存',totalRow:true}
-	      ,{field: 'operator', title: '操作',toolbar: '#crkInput'}
+	      ,{field: 'operator', title: '操作',toolbar: '#crkOperator'}
 	    ]]
 	  });
 	  
@@ -118,6 +129,18 @@
     				    body.find("#productId").val(data.id);//给弹出层元素赋值
     				  }
 	    		});
+	    //出库弹窗
+	    }else if(layEvent === 'crkOutput'){
+	    	layer.open({
+	    		  type: 2,
+	    		  title:'出库',
+	    		  area : ['450px', '450px'],//宽，高
+	    		  content: '/html/crkOutput.html', //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+    			  success: function(layerCur, index){ // success 弹窗成功之后回调，layerCur当前页dom，iframe的index
+    				    var body = layer.getChildFrame('body', index);//得到iframe的body，然后下面操作赋值
+    				    body.find("#productId").val(data.id);//给弹出层元素赋值
+    				  }
+	    		});
 	    }
 	  });
 	
@@ -135,9 +158,9 @@
 		  });
 	
 	///////////////以下是入库//////////////////////
-	  table.render({
+	table.render({
 		    elem: '#productInput'
-		    //,toolbar: '#productToolbar'
+		    ,toolbar: true
 		    ,height: 600
 		    ,url: '/product/pageListCrkInput' //数据接口
 		   	,request: {
@@ -178,8 +201,68 @@
 			        	productItem: $('#productItem2').val()
 			        }
 			      });
+		///////////////以下是出库//////////////////////
 		  });
-	
+	  table.render({
+		    elem: '#productOutput'
+		    ,toolbar: true
+		    ,height: 600
+		    ,url: '/product/pageListCrkOutput' //数据接口
+		   	,request: {
+		   		    pageName: 'pageNum' //页码的参数名称，默认：page
+		   		    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+		   	}
+	   	    ,parseData: function(res){ //res 即为原始返回的数据
+	   		    return {
+	   		      "code": res.code, //解析接口状态
+	   		      "msg": res.value, //解析提示文本
+	   		      "count": res.data.total, //解析数据长度
+	   		      "data": res.data.list //解析数据列表
+	   		    };
+	   		  }
+		    ,page: true //开启分页
+		    ,totalRow:true // 开启合计功能
+		    ,cols: [[ //表头
+		      {field: 'productBrand', title: '品牌',totalRowText:'合计:' }
+		      ,{field: 'productType', title: '分类' }
+		      ,{field: 'productItem', title: '货号' }
+		      ,{field: 'suitableSeason', title: '适用季节'} 
+		      ,{field: 'suitableSex', title: '适用性别'}
+		      ,{field: 'productSize', title: '尺寸'}
+		      ,{field: 'productColor', title: '颜色'}
+		      ,{field: 'outputTime', title: '出库时间'}
+		      ,{field: 'outputNum', title: '数量',totalRow:true}
+		      ,{field: 'outputPrice', title: '价格'}
+		    ]]
+		  });
+		// 搜索，重载
+	  $('#productReload3').on('click', function(){
+				  //执行重载
+			      table.reload('productOutput', {
+			        page: {
+			          curr: 1 //重新从第 1 页开始
+			        }
+			        ,where: {
+			        	productItem: $('#productItem3').val()
+			        }
+			      });
+		  });
+	  ////////////监听tab切换/////////////////////
+	  element.on('tab(crk)', function(data){
+		 // console.log(this); //当前Tab标题所在的原始DOM元素
+		 // console.log(data.index); //得到当前Tab的所在下标,从0开始
+		 // console.log(data.elem); //得到当前的Tab大容器
+		  var tabIndex = data.index;
+		  if(tabIndex == 0){
+			  $('#productReload').click();
+		  }
+		  if(tabIndex == 1){
+			  $('#productReload2').click();
+		  }
+		  if(tabIndex == 2){
+			  $('#productReload3').click();
+		  }
+		});
 	  
 	}();
 </script>

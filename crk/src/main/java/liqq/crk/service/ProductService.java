@@ -97,12 +97,11 @@ public class ProductService {
 	 * @param pageSize
 	 * @return
 	 */
-	public PageInfo<CrkOutput> selectPageCrkOutput(int pageNum, int pageSize) {
+	public PageInfo<CrkProduct> selectPageCrkOutput(int pageNum, int pageSize,String productItem) {
 		PageHelper.startPage(pageNum, pageSize);
-		CrkOutputExample crkOutputExample = new CrkOutputExample();
-		List<CrkOutput> list = crkOutputMapper.selectByExample(crkOutputExample);
+		List<CrkProduct> list = crkProductMapper.selectByOutput(productItem);
 		// 用PageInfo对结果进行包装
-		PageInfo<CrkOutput> page = new PageInfo<>(list);
+		PageInfo<CrkProduct> page = new PageInfo<>(list);
 		return page;
 	}
 }

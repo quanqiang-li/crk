@@ -116,6 +116,30 @@ public class CrkProduct{
     private Date inputDate;
     private Integer inputNum;
     private BigDecimal inputPrice;
+    /*output*/
+    private Date outputTime;
+    private Integer outputNum;
+    private BigDecimal outputPrice;
+    
+ public void setOutputTime(Date outputTime) {
+	this.outputTime = outputTime;
+}
+ public Date getOutputTime() {
+	return outputTime;
+}
+    public void setOutputNum(Integer outputNum) {
+		this.outputNum = outputNum;
+	}
+    public Integer getOutputNum() {
+		return outputNum;
+	}
+    public void setOutputPrice(BigDecimal outputPrice) {
+		this.outputPrice = outputPrice;
+	}
+    public BigDecimal getOutputPrice() {
+		return outputPrice;
+	}
+    
     
     public void setInputDate(Date inputDate) {
 		this.inputDate = inputDate;
