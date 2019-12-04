@@ -61,7 +61,7 @@ public class LogAdvice {
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 					.getRequest();
 			ip = WebUtil.getIpAddr(request);
-			//res = joinPoint.proceed();
+			res = joinPoint.proceed();//执行
 			time = System.currentTimeMillis() - start.getTime();
 			//userId = (Integer) request.getAttribute(Constant.USER_ID);
 		} catch (Throwable e) {
