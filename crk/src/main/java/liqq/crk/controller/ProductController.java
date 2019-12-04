@@ -1,5 +1,7 @@
 package liqq.crk.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,7 @@ import com.github.pagehelper.PageInfo;
 
 import liqq.crk.common.Code;
 import liqq.crk.common.ReturnData;
+import liqq.crk.conf.LogAnnotation;
 import liqq.crk.model.CrkInput;
 import liqq.crk.model.CrkOutput;
 import liqq.crk.model.CrkProduct;
@@ -19,6 +22,8 @@ import liqq.crk.service.ProductService;
 @RestController
 @RequestMapping("product")
 public class ProductController {
+	
+	private Logger logger =  LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private ProductService productService;
@@ -30,6 +35,7 @@ public class ProductController {
 	 * @param pageSize
 	 * @return
 	 */
+	@LogAnnotation(module = "分页查询商品")
 	@GetMapping("pageList")
 	public ReturnData pageList(Integer pageNum, Integer pageSize,String productItem) {
 		pageNum = pageNum == null ? 1 : pageNum;
@@ -44,6 +50,7 @@ public class ProductController {
 	 * @param crkProduct
 	 * @return
 	 */
+	@LogAnnotation(module = "添加商品")
 	@PostMapping("addProduct")
 	public ReturnData addProduct(CrkProduct crkProduct) {
 		productService.addProduct(crkProduct);
@@ -55,6 +62,7 @@ public class ProductController {
 	 * @param crkInput
 	 * @return
 	 */
+	@LogAnnotation(module = "入库")
 	@PostMapping("crkInput")
 	public ReturnData crkInput(@RequestBody CrkInput crkInput) {
 		productService.crkInput(crkInput);
@@ -68,6 +76,7 @@ public class ProductController {
 	 * @param productItem
 	 * @return
 	 */
+	@LogAnnotation(module = "分页查询入库明细")
 	@GetMapping("pageListCrkInput")
 	public ReturnData pageListCrkInput(Integer pageNum, Integer pageSize,String productItem) {
 		pageNum = pageNum == null ? 1 : pageNum;
@@ -77,10 +86,11 @@ public class ProductController {
 	}
 	
 	/**
-	 * 入库
+	 * 出库
 	 * @param crkInput
 	 * @return
 	 */
+	@LogAnnotation(module = "出库")
 	@PostMapping("crkOutput")
 	public ReturnData crkOutput(@RequestBody CrkOutput crkOutput) {
 		productService.crkOutput(crkOutput);
@@ -88,11 +98,12 @@ public class ProductController {
 	}
 	
 	/**
-	 * 入库分页查询
+	 * 出库分页查询
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
 	 */
+	@LogAnnotation(module = "分页查询出库明细")
 	@GetMapping("pageListCrkOutput")
 	public ReturnData pageListCrkOutput(Integer pageNum, Integer pageSize,String productItem) {
 		pageNum = pageNum == null ? 1 : pageNum;

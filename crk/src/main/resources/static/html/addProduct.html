@@ -83,7 +83,11 @@
 				      data: data.field,
 				      success: function(data){
 				    	  layer.msg(data.value);
-				          }
+				    	  //重载父页面的表格数据，
+				    	  //如果是用的外部jquery，parent.$('#productReload').click();
+				    	  //使用的layui内置的jquery
+				    	  parent.layui.$('#productReload').click();
+				       }
 				  })
 				return false;
 			});
